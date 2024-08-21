@@ -1,0 +1,12 @@
+#!/usr/bin/python
+
+import click
+
+from app import Boo
+from exceptions import BooException
+
+if "__main__" == __name__:
+    try:
+        Boo.run()
+    except BooException as booException:
+        click.echo(booException, err=True)
