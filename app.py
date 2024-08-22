@@ -10,6 +10,7 @@ class Boo:
         'update': 'update',
         'multi-update': 'multi-update',
         "upgrade": "upgrade",
+        "check-updates": "check-updates",
     }
 
     @classmethod
@@ -23,6 +24,7 @@ class Boo:
         cls.__tool.add_command(cls.update)
         cls.__tool.add_command(cls.multi_update)
         cls.__tool.add_command(cls.upgrade)
+        cls.__tool.add_command(cls.check_updates)
 
     @staticmethod
     @click.group()
@@ -75,4 +77,10 @@ class Boo:
     @click.command(__commands['upgrade'])
     def upgrade():
         command: commands.UpgradeCommand = commands.UpgradeCommand()
+        command.run()
+
+    @staticmethod
+    @click.command(__commands['check-updates'])
+    def check_updates():
+        command: commands.CheckUpdatesCommand = commands.CheckUpdatesCommand()
         command.run()
