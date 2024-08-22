@@ -3,7 +3,7 @@
 # Function to check if the script is run as root
 check_root() {
     if [ "$(id -u)" -ne 0 ]; then
-        echo "This script must be run as root. Use 'sudo' to run it."
+        echo "[boo]: This script must be run as root. Use 'sudo' to run it."
         exit 1
     fi
 }
@@ -11,52 +11,95 @@ check_root() {
 # Check if the script is run as root
 check_root
 
-# Define the repository path
-BOO_REPO_PATH="/opt/boo"
+# Get the original user who invoked sudo
+ORIGINAL_USER=$(logname)
+
+# Define the repository path and installation path
+REPO_PATH="/home/$ORIGINAL_USER/boo"
+SYMLINK_PATH="/usr/local/bin/boo"
+
+# Get the default shell of the original user
+USER_SHELL=$(getent passwd "$ORIGINAL_USER" | cut -d: -f7)
 
 # Clone the repository if it doesn't exist
-if [ ! -d "$BOO_REPO_PATH" ]; then
-    echo
-    echo "Cloning repository into $BOO_REPO_PATH"
-    git clone https://github.com/shahmal1yev/boo "$BOO_REPO_PATH"
+if [ ! -d "$REPO_PATH" ]; then
+    echo "[boo]: Cloning repository into $REPO_PATH"
+    sudo -u "$ORIGINAL_USER" git clone https://github.com/shahmal1yev/boo "$REPO_PATH"
 else
-    echo
-    echo "Directory $BOO_REPO_PATH already exists. Skipping clone."
+    echo "[boo]: Directory $REPO_PATH already exists. Skipping clone."
 fi
 
 echo
 # Create virtual environment if it doesn't exist
-echo "Creating virtual environment"
-if [ ! -d "$BOO_REPO_PATH/.venv" ]; then
-    python -m venv "$BOO_REPO_PATH/.venv"
+echo "[boo]: Creating virtual environment"
+if [ ! -d "$REPO_PATH/.venv" ]; then
+    sudo -u "$ORIGINAL_USER" python3 -m venv "$REPO_PATH/.venv"
 else
-    echo
-    echo "Virtual environment already exists at $BOO_REPO_PATH/.venv."
+    echo "[boo]: Virtual environment already exists at $REPO_PATH/.venv"
 fi
 
 echo
 # Activate virtual environment and install dependencies
-echo "Installing dependencies"
-source "$BOO_REPO_PATH/.venv/bin/activate"
-pip install -r "$BOO_REPO_PATH/requirements.txt"
+echo "[boo]: Installing dependencies"
+source "$REPO_PATH/.venv/bin/activate"
+sudo -u "$ORIGINAL_USER" pip install -r "$REPO_PATH/requirements.txt"
 
 echo
 # Run tests
-echo "Running tests"
-python -m unittest discover -s "$BOO_REPO_PATH" -v
+echo "[boo]: Running tests"
+sudo -u "$ORIGINAL_USER" python3 -m unittest discover -s "$REPO_PATH" -v
 
 echo
-# Create a symbolic link if it doesn't exist
-if [ ! -L "/usr/local/bin/boo" ]; then
-    echo "Creating symbolic link to $BOO_REPO_PATH/main"
-    ln -s "$BOO_REPO_PATH/main" /usr/local/bin/boo
-    echo "Symbolic link created: /usr/local/bin/boo -> $BOO_REPO_PATH/main"
+# Create symbolic link if it doesn't exist
+if [ ! -L "$SYMLINK_PATH" ]; then
+    echo "[boo]: Creating symbolic link to $REPO_PATH/main"
+    ln -s "$REPO_PATH/main" "$SYMLINK_PATH"
+    echo "[boo]: Symbolic link created: $SYMLINK_PATH -> $REPO_PATH/main"
 else
-    echo "Symbolic link /usr/local/bin/boo already exists. Skipping creation."
+    echo "[boo]: Symbolic link $SYMLINK_PATH already exists. Skipping creation."
 fi
+
+# Function to add the check-update function to the user's profile file
+add_check_update_to_profile() {
+    local profile_file
+
+    case "$USER_SHELL" in
+        */zsh)
+            profile_file="/home/$ORIGINAL_USER/.zshrc"
+            ;;
+        */bash)
+            profile_file="/home/$ORIGINAL_USER/.bashrc"
+            ;;
+        *)
+            # Default to bash if no specific shell detected
+            profile_file="/home/$ORIGINAL_USER/.bashrc"
+            ;;
+    esac
+
+    if ! grep -q "boo_check_update" "$profile_file"; then
+        echo "[boo]: Adding check-update command to $profile_file"
+        cat >> "$profile_file" <<EOF
+
+# Function to check for updates to Boo CLI tool on every new shell session
+boo_check_update() {
+    if [ -x "$SYMLINK_PATH" ]; then
+        boo check-update
+    fi
+}
+
+boo_check_update
+EOF
+        echo "[boo]: check-update command added to $profile_file"
+    else
+        echo "[boo]: check-update command already exists in $profile_file. Skipping addition."
+    fi
+}
+
+# Add the check-update function to the original user's profile
+add_check_update_to_profile
 
 # Deactivate virtual environment
 deactivate
 
 echo
-echo "Installation completed successfully. Test it with 'boo'"
+echo "[boo]: Installation completed successfully. Test it with 'boo'"
