@@ -9,6 +9,8 @@ class Boo:
         'versions': 'versions',
         'update': 'update',
         'multi-update': 'multi-update',
+        "upgrade": "upgrade",
+        "check-updates": "check-updates",
     }
 
     @classmethod
@@ -21,6 +23,8 @@ class Boo:
         cls.__tool.add_command(cls.versions)
         cls.__tool.add_command(cls.update)
         cls.__tool.add_command(cls.multi_update)
+        cls.__tool.add_command(cls.upgrade)
+        cls.__tool.add_command(cls.check_updates)
 
     @staticmethod
     @click.group()
@@ -57,7 +61,6 @@ class Boo:
     @click.option("-c", "--commit", is_flag=True, help="Commit changes to Git after updating.")
     @click.option("-z", "--zip", type=str, help="Path to save the zip files of updated plugins.")
     def multi_update(plugins_path, increase, decrease, include, exclude, style, commit, zip):
-        print(commit)
         command: commands.MultiUpdateCommand = commands.MultiUpdateCommand(
             plugins_path,
             increase,
@@ -68,4 +71,16 @@ class Boo:
             commit,
             zip
         )
+        command.run()
+
+    @staticmethod
+    @click.command(__commands['upgrade'])
+    def upgrade():
+        command: commands.UpgradeCommand = commands.UpgradeCommand()
+        command.run()
+
+    @staticmethod
+    @click.command(__commands['check-updates'])
+    def check_updates():
+        command: commands.CheckUpdatesCommand = commands.CheckUpdatesCommand()
         command.run()
