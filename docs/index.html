@@ -4,28 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Install Boo CLI Tool easily with our setup script.">
-    <title>Install Boo CLI Tool</title>
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <title>Install Boo CLI Tool | Modern Development Tools</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/32x32.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon/64x64.png" />
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
-<div class="container">
-    <h1>Install the Boo CLI Tool</h1>
-    <p>Welcome to the <code>boo</code> CLI Tool installation page. Follow the steps below to easily set up Boo on your system.</p>
+    <div class="container">
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="#install">Install</a></li>
+                    <li><a href="#help">Help</a></li>
+                    <li><a href="https://github.com/shahmal1yev/boo" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <h2>Installation Instructions</h2>
-    <p>To install Boo, download the installation script and run it with the following commands:</p>
+        <main>
+            <section id="install">
+                <h1>Install the boo CLI Tool</h1>
+                <p class="subtitle">Effortlessly manage your WordPress plugin versions</p>
 
-    <pre><code>wget -O - https://shahmal1yev.github.io/boo/install.sh | sudo bash</code></pre>
+                <div class="installation-card">
+                    <h2>Quick Install</h2>
+                    <p>Run this command in your terminal:</p>
+                    <pre><code>curl -sSL https://shahmal1yev.github.io/boo/install.sh | sudo bash</code></pre>
+                    <button class="copy-btn" data-clipboard-target="pre code">
+                        <i data-feather="copy"></i> Copy
+                    </button>
+                </div>
 
-    <a href="./install.sh" class="button" download>Download Install Script</a>
+                <div class="cta-group">
+                    <a href="./install.sh" class="button primary" download target="_blank">
+                        <i data-feather="download"></i> Download Install Script
+                    </a>
+                    <a href="https://github.com/shahmal1yev/boo/blob/main/README.md" target="_blank" class="button secondary">
+                        <i data-feather="book"></i> Read Docs
+                    </a>
+                    <a href="https://github.com/shahmal1yev/boo/blob/main/LICENSE.md" target="_blank" class="button secondary">
+                        <i data-feather="book-open"></i> License
+                    </a>
+                </div>
+            </section>
 
-    <h2>Need Help?</h2>
-    <p>If you encounter any issues, please refer to our <a href="https://github.com/shahmal1yev/boo/issues">GitHub
-        Issues page</a> for support.</p>
+            <section id="help">
+                <h2>Need Help?</h2>
+                <p>If you encounter any issues or have questions, we're here to help:</p>
+                <ul class="help-options">
+                    <li>
+                        <i data-feather="github"></i>
+                        <a href="https://github.com/shahmal1yev/boo/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a>
+                    </li>
+                </ul>
+            </section>
+        </main>
 
-    <footer>
-        <p>&copy; 2024 Boo CLI Tool. All rights reserved.</p>
-    </footer>
-</div>
+        <footer>
+            <p>&copy; 2024 boo CLI Tool. All rights reserved.</p>
+            <ul class="social-links">
+                <li><a href="https://github.com/shahmal1yev/boo" aria-label="GitHub"><i data-feather="github"></i></a></li>
+                <li><a href="https://linkedin.com/in/shahmal1yev" aria-label="LinkedIn"><i data-feather="linkedin"></i></a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    <script>
+        feather.replace();
+        new ClipboardJS('.copy-btn');
+    </script>
 </body>
 </html>
