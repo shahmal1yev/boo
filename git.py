@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 class Git:
@@ -12,7 +13,7 @@ class Git:
 
         :param repo_path: The path to the Git repository.
         """
-        subprocess.run(["git", "fetch"], cwd=repo_path, check=True)
+        subprocess.run(["git", "fetch"], cwd=repo_path, check=True, stdout=open(os.devnull, 'wb'))
 
     @staticmethod
     def has_new_commits(repo_path: str) -> bool:
