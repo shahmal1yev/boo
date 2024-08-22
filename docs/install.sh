@@ -59,7 +59,7 @@ else
     echo "[boo]: Symbolic link $SYMLINK_PATH already exists. Skipping creation."
 fi
 
-# Function to add the check-update function to the user's profile file
+# Function to add the check-updates function to the user's profile file
 add_check_update_to_profile() {
     local profile_file
 
@@ -77,25 +77,25 @@ add_check_update_to_profile() {
     esac
 
     if ! grep -q "boo_check_update" "$profile_file"; then
-        echo "[boo]: Adding check-update command to $profile_file"
+        echo "[boo]: Adding check-updates command to $profile_file"
         cat >> "$profile_file" <<EOF
 
 # Function to check for updates to Boo CLI tool on every new shell session
 boo_check_update() {
     if [ -x "$SYMLINK_PATH" ]; then
-        boo check-update
+        boo check-updates
     fi
 }
 
 boo_check_update
 EOF
-        echo "[boo]: check-update command added to $profile_file"
+        echo "[boo]: check-updates command added to $profile_file"
     else
-        echo "[boo]: check-update command already exists in $profile_file. Skipping addition."
+        echo "[boo]: check-updates command already exists in $profile_file. Skipping addition."
     fi
 }
 
-# Add the check-update function to the original user's profile
+# Add the check-updates function to the original user's profile
 add_check_update_to_profile
 
 # Deactivate virtual environment
