@@ -13,6 +13,10 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--background-color);
@@ -194,4 +198,16 @@ footer {
   .help-options {
     grid-template-columns: 1fr;
   }
+}
+
+section#logo {
+  margin: 30px !important;
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.logo-container img {
+  max-width: 300px;
 }
