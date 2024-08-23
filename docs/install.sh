@@ -38,16 +38,40 @@ else
     echo "[boo]: Virtual environment already exists at $REPO_PATH/.venv"
 fi
 
-echo
-# Activate virtual environment and install dependencies
-echo "[boo]: Installing dependencies"
-source "$REPO_PATH/.venv/bin/activate"
-sudo -u "$ORIGINAL_USER" pip install -r "$REPO_PATH/requirements.txt"
+run_in_virtual_env() {
+    local command="$1"
+    sudo -u "$ORIGINAL_USER" -H bash -c "source $REPO_PATH/.venv/bin/activate && $command"
+}
+
+# Validate if the virtual environment is activated
+validate_venv() {
+    local result
+    result=$(run_in_virtual_env '[[ -n "$VIRTUAL_ENV" ]] && echo "1" || echo "0"')
+    if [ "$result" -eq 1 ]; then
+        echo "Virtual environment is activated"
+        return 0
+    else
+        echo "Virtual environment is not activated"
+        return 1
+    fi
+}
+
+# Example usage
+validate_venv
+if [ $? -ne 0 ]; then
+    echo "Exiting because virtual environment is not activated."
+    exit 1
+fi
 
 echo
-# Run tests
+echo "[boo]: Activating virtual environment and installing dependencies"
+# Install dependencies
+run_in_virtual_env "pip install -r $REPO_PATH/requirements.txt"
+
+echo
 echo "[boo]: Running tests"
-sudo -u "$ORIGINAL_USER" python3 -m unittest discover -s "$REPO_PATH" -v
+# Run tests
+run_in_virtual_env "python3 -m unittest discover -s '$REPO_PATH' -v"
 
 echo
 # Create symbolic link if it doesn't exist
@@ -97,9 +121,6 @@ EOF
 
 # Add the check-updates function to the original user's profile
 add_check_update_to_profile
-
-# Deactivate virtual environment
-deactivate
 
 echo
 echo "[boo]: Installation completed successfully. Test it with 'boo'"
